@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Polly;
 
 namespace API
 {
@@ -27,7 +28,8 @@ namespace API
         {
             services.Configure<ServiceSettings>(Configuration.GetSection(nameof(ServiceSettings)));
 
-            services.AddHttpClient<WeatherClient>(); // register new httpclient
+            services.AddHttpClient<WeatherClient>()  // register new httpclient 
+                    .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
