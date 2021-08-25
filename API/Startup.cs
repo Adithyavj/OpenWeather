@@ -28,8 +28,10 @@ namespace API
         {
             services.Configure<ServiceSettings>(Configuration.GetSection(nameof(ServiceSettings)));
 
+            // Add retries for the api using polly package
             services.AddHttpClient<WeatherClient>()  // register new httpclient 
-                    .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
+                    .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
+                    .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(3, TimeSpan.FromSeconds(10)));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
