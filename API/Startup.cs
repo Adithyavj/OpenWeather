@@ -26,6 +26,9 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ServiceSettings>(Configuration.GetSection(nameof(ServiceSettings)));
+
+            services.AddHttpClient<WeatherClient>(); // register new httpclient
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
