@@ -33,7 +33,8 @@ namespace API
                     .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(10, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))))
                     .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(3, TimeSpan.FromSeconds(10)));
 
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                    .AddCheck<ExternalEndpointHealthCheck>("OpenWeather");
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
